@@ -35,20 +35,23 @@ const App = () => {
           .update(personToChange.id, changedPerson)
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== personToChange.id ? p : returnedPerson))
+            setNewName('')
+            setNewNumber('')
           })
           .catch(error => {
+            console.log(error.response.data.error)
+
             setError(true)
             setNotification(
-              `the person '${personToChange.name}' was already deleted from server`
+              //`the person '${personToChange.name}' was already deleted from server`
+              error.response.data.error.toString()
             )
             setTimeout(() => {
               setError(false)
               setNotification(null)
-            }, 5000)
-            setPersons(persons.filter(p => p.id !== personToChange.id))
+            }, 10000)
+            //setPersons(persons.filter(p => p.id !== personToChange.id))
           })
-        setNewName('')
-        setNewNumber('')
       }
     }
     else {
@@ -64,14 +67,27 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
-        })
 
-        setNotification(
-          `Added '${personObject.name}'`
-        )
-        setTimeout(() => {
-          setNotification(null)
-        }, 5000)
+          setError(false)
+          setNotification(
+            `Added '${personObject.name}'`
+          )
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
+        })
+        .catch(error => {
+          console.log(error.response.data.error)
+
+          setError(true)
+          setNotification(
+            error.response.data.error.toString()
+          )
+          setTimeout(() => {
+            setError(false)
+            setNotification(null)
+          }, 10000)
+        })
     }
   }
 
